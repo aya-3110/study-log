@@ -1,0 +1,66 @@
+doctype html
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    link(rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      integrity="sha256-fx038NkLY4U1TCrBDiu5FWPEa9eiZu01EiLryshJbCo="
+      crossorigin="anonymous")
+    link(rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css")
+    link(rel="stylesheet" href="style.css")
+    title 学習記録アプリ
+  body.container.overflow-scroll(data-bs-theme=currentTheme)
+    nav.navbar.fixed-top.bg-primary
+      div.container-fluid
+        h1.text-light.navbar-brand.mx-auto 学習記録アプリ
+          i.bi-book-half.ms-1
+        div.dropdown
+          button.btn.btn-outline-light.dropdown-toggle(type="button" id="menu" data-bs-toggle="dropdown" aria-expanded="false") #{user}
+            i.bi-gear-fill.ms-1
+          ul.dropdown-menu.dropdown-menu-end(aria-labelledby="menu")
+            li
+              - const changeThemeText = (currentTheme === 'light' ? 'ダークモードに切り替え' : 'ライトモードに切り替え');
+              a.dropdown-item(href="/changeTheme") #{changeThemeText}
+              a.dropdown-item(href="/logout") ログアウト
+    div.mb-4
+      form(method="post" action="/records" name="message-form").container-fluid.row.g-3
+        div.col-12
+          label.form-label(for="studyDate") 学習日
+          input.form-control(type="date" id="studyDate" name="studyDate" required)
+        div.col-12
+          label.form-label(for="subject") 科目
+          input.form-control(type="text" id="subject" name="subject" maxlength="100" required)
+        div.col-12
+          label.form-label(for="minutes") 勉強時間（分）
+          input.form-control(type="number" id="minutes" name="minutes" min="1" max="1440" step="1" required)
+        div.col-12
+          label.form-label(for="content") 学習内容
+          textarea(name="content" id="content" rows="4" placeholder="学習内容を入力してください\nCtrl(Command)+Enterで送信できます" required).form-control
+          input(type="hidden" name="oneTimeToken" value=oneTimeToken)
+        div.col-12
+          button(type="submit").btn.btn-primary.float-end 記録する
+            i.bi-send.ms-1
+    p.lead 合計勉強時間：#{totalMinutes}分
+    each record in records
+      - const cardClass = (user === record.recordedBy? 'card my-3 border-primary' : 'card my-3')
+      div(class=cardClass)
+        div.card-body
+          div.d-flex.justify-content-between
+            h5.card-title #{record.subject}
+            small.card-text #{record.formattedStudyDate}
+          p.card-text 勉強時間：#{record.minutes}分
+          p.card-text.lead #{record.content}
+        - const isDeletable = (user === record.recordedBy)
+        if isDeletable
+          div.card-footer.d-flex.justify-content-end
+            form(method="post" action="/records/delete")
+              input(type="hidden" name="id" value=record.id)
+              input(type="hidden" name="oneTimeToken" value=oneTimeToken)
+              button(type="submit").btn.btn-outline-danger.btn-sm
+                i.bi-trash
+
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha256-qlPVgvl+tZTCpcxYJFdHB/m6mDe84wRr+l81VoYPTgQ="
+      crossorigin="anonymous")
+    script(src="study-log.js")
