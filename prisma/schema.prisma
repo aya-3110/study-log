@@ -20,5 +20,4 @@ model Record {
   content   String
   minutes   Int
   recordedBy String @db.VarChar(255)
-  createdAt DateTime @db.Timestamptz(6) @default(now())
 }

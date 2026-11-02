@@ -15,8 +15,6 @@ test('学習内容に含まれる HTML タグがエスケープされる', () =>
           subject: '数学',
           formattedStudyDate: '2026年11月02日',
           minutes: 30,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ],
       user: 'test_user',
